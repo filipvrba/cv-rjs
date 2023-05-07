@@ -1,0 +1,8 @@
+import 'Route', './core/route'
+
+ROUTES = {
+  '/': PAGES[:home],
+  '404': PAGES[:err_404]
+}
+
+Route.new ROUTES

@@ -1,0 +1,5 @@
+import "ElmGreet", "./elements/elm_greet"
+import "ElmHome", "./elements/elm_home"
+
+window.customElements.define('elm-greet', ElmGreet)
+window.customElements.define('elm-home', ElmHome)
