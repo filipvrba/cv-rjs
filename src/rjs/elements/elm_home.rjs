@@ -16,12 +16,12 @@ export default class ElmHome < HTMLElement
         <elm-greet></elm-greet>
 
         <div class='text-center pb-3 mb-4 pt-3 mt-4'>
-          <h2>Top Articles</h2>
+          <h2>Articles</h2>
         </div>
         <elm-articles></elm-articles>
 
         <div class='text-center pb-3 mb-4 pt-3 mt-4'>
-          <h2>Top Projects</h2>
+          <h2>Projects</h2>
         </div>
         <elm-projects></elm-projects>
       </div>
