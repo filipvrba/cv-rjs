@@ -1,8 +1,19 @@
+import { EVENTS } from "../constants";
+import Events from "../events";
+
 export default class ElmArticles extends HTMLElement {
   constructor() {
     super();
+    this.init_spinner();
 
-    this._data = [{
+    this.get_data((data) => {
+      Events.send(EVENTS.elm_articles_length, data.length);
+      this.init_elm(data)
+    })
+  };
+
+  get_data(block) {
+    let data = [{
       id: "1",
       name: "Edu Game | Project development",
       description: "What goes into creating a smaller project that is a game for education, for individuals, looking to master the Ruby programming language. The development process is described in this article.",
@@ -12,15 +23,14 @@ export default class ElmArticles extends HTMLElement {
       created_at: "1684956786"
     }];
 
-    this.init_spinner();
-    this.init_elm()
+    if (block) block(data)
   };
 
-  init_elm() {
+  init_elm(data) {
     let l_acc_item = () => {
       let result = "";
 
-      if (this._data.length == 0 || this._data[0].id == -1) {
+      if (data.length == 0 || data[0].id == -1) {
         result = `${`
         <div class='text-center'>
           <p class='h4 text-muted'>no articles found</p>
@@ -29,8 +39,8 @@ export default class ElmArticles extends HTMLElement {
         return result
       };
 
-      for (let i = 0; i < this._data.length; i++) {
-        let article = this._data[i];
+      for (let i = 0; i < data.length; i++) {
+        let article = data[i];
         let article_id = `${article.id}-${article.name.url_form()}`;
         let template = `${`
           <div id='${article_id}' class='accordion-item'>

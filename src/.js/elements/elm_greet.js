@@ -1,9 +1,37 @@
+import { EVENTS } from "../constants";
+
 export default class ElmGreet extends HTMLElement {
   constructor() {
     super();
+    this._h_elm_projects_length = e => this.init_count_projects(e.detail);
+    this._h_elm_articles_length = e => this.init_count_articles(e.detail);
     this._data = {count: {}};
     this.innerHTML = `<elm-spinner></elm-spinner>`;
     this.init_elm()
+  };
+
+  connectedCallback() {
+    document.addEventListener(
+      EVENTS.elm_projects_length,
+      this._h_elm_projects_length
+    );
+
+    document.addEventListener(
+      EVENTS.elm_articles_length,
+      this._h_elm_articles_length
+    )
+  };
+
+  disconnectedCallback() {
+    document.removeEventListener(
+      EVENTS.elm_projects_length,
+      this._h_elm_projects_length
+    );
+
+    document.removeEventListener(
+      EVENTS.elm_articles_length,
+      this._h_elm_articles_length
+    )
   };
 
   init_elm() {
@@ -33,7 +61,7 @@ export default class ElmGreet extends HTMLElement {
             </div>
             <div class='col'>
               <p class='fs-6'>
-                <strong>${this._data.count.articles} articles</strong> and <strong>${this._data.count.projects} projects</strong>
+                <strong id='count-articles'>0 articles</strong> and <strong id='count-projects'>0 projects</strong>
                 have already been created.
               </p>
             </div>
@@ -42,5 +70,15 @@ export default class ElmGreet extends HTMLElement {
       </div>
     `}`;
     this.innerHTML = template
+  };
+
+  init_count_articles(length) {
+    let count_articles = document.getElementById("count-articles");
+    count_articles.innerText = `${length} articles`
+  };
+
+  init_count_projects(length) {
+    let count_projects = document.getElementById("count-projects");
+    count_projects.innerText = `${length} projects`
   }
 }

@@ -1,10 +1,20 @@
 import { markdown } from "markdown";
+import { EVENTS } from "../constants";
+import Events from "../events";
 
 export default class ElmProjects extends HTMLElement {
   constructor() {
     super();
+    this.init_spinner();
 
-    this._data = [{
+    this.get_data((data) => {
+      Events.send(EVENTS.elm_projects_length, data.length);
+      this.init_elm(data)
+    })
+  };
+
+  get_data(block) {
+    let data = [{
       name: "Edu Game",
       description: "![edu_game_01](https://github.com/filipvrba/edu-game-rjs/raw/main/docs/public/png/edu_game_01.png)\nA brief description of the MRuby functionality, a vital component of the Edu Game project.",
       category: "Game",
@@ -12,15 +22,14 @@ export default class ElmProjects extends HTMLElement {
       last_change: "1684956786"
     }];
 
-    this.init_spinner();
-    this.init_elm()
+    if (block) block(data)
   };
 
-  init_elm() {
+  init_elm(data) {
     let l_acc_item = () => {
       let result = "";
 
-      if (this._data.length == 0) {
+      if (data.length == 0) {
         result = `${`
         <div class='text-center'>
           <p class='h4 text-muted'>no projects found</p>
@@ -28,8 +37,8 @@ export default class ElmProjects extends HTMLElement {
         `}`
       };
 
-      for (let i = 0; i < this._data.length; i++) {
-        let project = this._data[i];
+      for (let i = 0; i < data.length; i++) {
+        let project = data[i];
         let template = `${`
         <div class='accordion-item'>
           <h2 class='accordion-header' id='heading_${i}'>
@@ -47,7 +56,7 @@ export default class ElmProjects extends HTMLElement {
                     <div class='md-html card-text'>${markdown.toHTML(project.description)}</div>
                     <div class='row g-0'>
                       <div class='col-6' style='margin-top: auto; margin-bottom: auto;'>
-                        <p class='card-text'><small class='text-muted'>${project.category} | Last updated ${Number(project.last_change).to_date()}</small></p>
+                        <p class='card-text'><small class='text-muted'>${project.category} | ${Number(project.last_change).to_date()}</small></p>
                       </div>
                       <div class='col-6 text-center'>
                         <a href='${project.url}' target='_blank' class='btn btn-primary card-text'>See details</a>

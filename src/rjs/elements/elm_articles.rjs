@@ -1,8 +1,19 @@
+import ['EVENTS'], '../constants'
+import 'Events', '../events'
+
 export default class ElmArticles < HTMLElement
   def initialize
     super
 
-    @data = [
+    init_spinner()
+    get_data() do |data|
+      Events.send(EVENTS[:elm_articles_length], data.length)
+      init_elm(data)
+    end
+  end
+
+  def get_data(&block)
+    data = [
       {
         id: "1",
         name: "Edu Game | Project development",
@@ -13,16 +24,14 @@ export default class ElmArticles < HTMLElement
         created_at: "1684956786"
       }
     ]
-
-    init_spinner()
-    init_elm()
+    block(data) if block
   end
 
-  def init_elm()
+  def init_elm(data)
     l_acc_item = lambda do
       result = ""
 
-      if @data.length == 0 or @data[0].id == -1
+      if data.length == 0 or data[0].id == -1
         result = """
         <div class='text-center'>
           <p class='h4 text-muted'>no articles found</p>
@@ -31,7 +40,7 @@ export default class ElmArticles < HTMLElement
         return result
       end
 
-      (0...@data.length).step(1) do |i| article = @data[i]
+      (0...data.length).step(1) do |i| article = data[i]
         article_id = "#{article[:id]}-#{article[:name].url_form()}"
 
         template = """

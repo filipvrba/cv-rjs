@@ -1,10 +1,20 @@
 import ['markdown'], 'markdown'
+import ['EVENTS'], '../constants'
+import 'Events', '../events'
 
 export default class ElmProjects < HTMLElement
   def initialize
     super
 
-    @data = [
+    init_spinner()
+    get_data() do |data|
+      Events.send(EVENTS[:elm_projects_length], data.length)
+      init_elm(data)
+    end
+  end
+
+  def get_data(&block)
+    data = [
       {
         name: "Edu Game",
         description: "![edu_game_01](https://github.com/filipvrba/edu-game-rjs/raw/main/docs/public/png/edu_game_01.png)\nA brief description of the MRuby functionality, a vital component of the Edu Game project.",
@@ -13,16 +23,14 @@ export default class ElmProjects < HTMLElement
         last_change: "1684956786"
       }
     ]
-
-    init_spinner()
-    init_elm()
+    block(data) if block
   end
 
-  def init_elm()
+  def init_elm(data)
     l_acc_item = lambda do
       result = ""
 
-      if @data.length == 0
+      if data.length == 0
         result = """
         <div class='text-center'>
           <p class='h4 text-muted'>no projects found</p>
@@ -30,7 +38,7 @@ export default class ElmProjects < HTMLElement
         """
       end
 
-      (0...@data.length).step(1) do |i| project = @data[i]
+      (0...data.length).step(1) do |i| project = data[i]
         template = """
         <div class='accordion-item'>
           <h2 class='accordion-header' id='heading_#{i}'>
@@ -48,7 +56,7 @@ export default class ElmProjects < HTMLElement
                     <div class='md-html card-text'>#{markdown.toHTML(project[:description])}</div>
                     <div class='row g-0'>
                       <div class='col-6' style='margin-top: auto; margin-bottom: auto;'>
-                        <p class='card-text'><small class='text-muted'>#{project[:category]} | Last updated #{ Number(project[:last_change]).to_date() }</small></p>
+                        <p class='card-text'><small class='text-muted'>#{project[:category]} | #{ Number(project[:last_change]).to_date() }</small></p>
                       </div>
                       <div class='col-6 text-center'>
                         <a href='#{project[:url]}' target='_blank' class='btn btn-primary card-text'>See details</a>
