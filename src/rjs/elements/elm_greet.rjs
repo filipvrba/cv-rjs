@@ -1,5 +1,6 @@
 import ['EVENTS', 'GITHUB_URL'], '../constants'
 import 'Net', '../third-side/bef/net'
+import 'Events', '../events'
 
 export default class ElmGreet < HTMLElement
   def initialize
@@ -10,6 +11,7 @@ export default class ElmGreet < HTMLElement
     init_spinner()
     get_data() do |data|
       init_elm(data)
+      Events.send(EVENTS[:elm_greet_loaded])
     end
   end
 

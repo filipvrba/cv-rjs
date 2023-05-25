@@ -1,5 +1,6 @@
 import { EVENTS, GITHUB_URL } from "../constants";
 import Net from "../third-side/bef/net";
+import Events from "../events";
 
 export default class ElmGreet extends HTMLElement {
   constructor() {
@@ -7,7 +8,11 @@ export default class ElmGreet extends HTMLElement {
     this._h_elm_projects_length = e => this.init_count_projects(e.detail);
     this._h_elm_articles_length = e => this.init_count_articles(e.detail);
     this.init_spinner();
-    this.get_data(data => this.init_elm(data))
+
+    this.get_data((data) => {
+      this.init_elm(data);
+      Events.send(EVENTS.elm_greet_loaded)
+    })
   };
 
   connectedCallback() {

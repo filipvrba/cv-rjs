@@ -5,12 +5,22 @@ import 'Events', '../events'
 export default class ElmProjects < HTMLElement
   def initialize
     super
+    @h_elm_greet_loaded = lambda do
+      get_data() do |data|
+        Events.send(EVENTS[:elm_projects_length], data.length)
+        init_elm(data)
+      end
+    end
 
     init_spinner()
-    get_data() do |data|
-      Events.send(EVENTS[:elm_projects_length], data.length)
-      init_elm(data)
-    end
+  end
+
+  def connectedCallback()
+    document.addEventListener(EVENTS[:elm_greet_loaded], @h_elm_greet_loaded)
+  end
+
+  def disconnectedCallback()
+    document.removeEventListener(EVENTS[:elm_greet_loaded], @h_elm_greet_loaded)
   end
 
   def get_data(&block)

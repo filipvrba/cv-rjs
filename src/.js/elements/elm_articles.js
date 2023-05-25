@@ -4,12 +4,15 @@ import Events from "../events";
 export default class ElmArticles extends HTMLElement {
   constructor() {
     super();
-    this.init_spinner();
 
-    this.get_data((data) => {
-      Events.send(EVENTS.elm_articles_length, data.length);
-      this.init_elm(data)
-    })
+    this._h_elm_greet_loaded = () => (
+      this.get_data((data) => {
+        Events.send(EVENTS.elm_articles_length, data.length);
+        this.init_elm(data)
+      })
+    );
+
+    this.init_spinner()
   };
 
   get_data(block) {
@@ -24,6 +27,20 @@ export default class ElmArticles extends HTMLElement {
     }];
 
     if (block) block(data)
+  };
+
+  connectedCallback() {
+    document.addEventListener(
+      EVENTS.elm_greet_loaded,
+      this._h_elm_greet_loaded
+    )
+  };
+
+  disconnectedCallback() {
+    document.removeEventListener(
+      EVENTS.elm_greet_loaded,
+      this._h_elm_greet_loaded
+    )
   };
 
   init_elm(data) {

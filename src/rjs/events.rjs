@@ -1,5 +1,5 @@
 export default class Events
-  def self.send(event, data)
+  def self.send(event, data = nil)
     event = new CustomEvent(event, {
       detail: data
     })
