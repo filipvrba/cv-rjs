@@ -1,15 +1,16 @@
-import ['EVENTS'], '../constants'
+import ['EVENTS', 'GITHUB_URL'], '../constants'
+import 'Net', '../third-side/bef/net'
 
 export default class ElmGreet < HTMLElement
   def initialize
     super
     @h_elm_projects_length = lambda { |e| init_count_projects(e.detail) }
     @h_elm_articles_length = lambda { |e| init_count_articles(e.detail) }
-
-    @data = { count: {} }
-    self.innerHTML = """<elm-spinner></elm-spinner>"""
-
-    init_elm()
+    
+    init_spinner()
+    get_data() do |data|
+      init_elm(data)
+    end
   end
 
   def connectedCallback()
@@ -22,17 +23,27 @@ export default class ElmGreet < HTMLElement
     document.removeEventListener(EVENTS[:elm_articles_length], @h_elm_articles_length)
   end
 
-  def init_elm()
+  def get_data(&block)
+    Net.get_json(GITHUB_URL) do |profile|
+      data = {
+        avatar: profile.avatar_url,
+        full_name: profile.name
+      }
+      block(data) if block
+    end
+  end
+
+  def init_elm(data)
     template = """
       <div class='row justify-content-center pb-3 mb-4 pt-3 mt-4'>
         <div class='col-lg-6'>
           <p class='h1 m-0'>Resources for a CV With More Clarity</p>
           <ul class='nav list-unstyled d-flex align-items-center'>
             <li class='ms-3'>
-            <img src='#{@data[:avatar]}' class='rounded d-block mb-3 mt-3' width='50' height='50' />
+            <img src='#{data[:avatar]}' class='rounded d-block mb-3 mt-3' width='50' height='50' />
             </li>
             <li class='ms-3'>
-              <p class='m-0'><strong>by #{@data[:full_name]}</strong></p>
+              <p class='m-0'><strong>by #{data[:full_name]}</strong></p>
             </li>
           </ul>
           <p>Need more information about my <strong>projects</strong>?</p>
@@ -59,6 +70,10 @@ export default class ElmGreet < HTMLElement
     """
 
     self.innerHTML = template
+  end
+
+  def init_spinner()
+    self.innerHTML = "<elm-spinner></elm-spinner>"
   end
 
   def init_count_articles(length)
