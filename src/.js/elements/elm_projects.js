@@ -40,7 +40,7 @@ export default class ElmProjects extends HTMLElement {
             result.push({
               name: repo.name,
               description: repo.description,
-              category: repo.topics.join(", "),
+              category: repo.topics.slice(0, 3).join(", "),
               url: repo.html_url,
               created_at: repo.created_at.to_date(),
               stargazers_count: repo.stargazers_count
