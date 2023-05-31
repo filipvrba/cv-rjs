@@ -66,10 +66,10 @@ export default class ElmGreet extends HTMLElement {
               </li>
             </ul>
           </a>
-          <p>Need more information about my <strong>projects</strong>?</p>
+          <p>Need to find out about my work?</p>
           <p>
-            In the written <strong>articles</strong>, I'll take you through how a few <strong>projects</strong> have developed.
-            Due to the diversity of each project, I categorize its location and specify its purpose.
+            Here you will find my best <strong>articles</strong> and <strong>projects</strong> I have written over the years of open-source development.
+            This CV page acts as a signpost, so if you want more information about my profile, articles or projects, just click the button or text.
           </p>
 
           <hr>
