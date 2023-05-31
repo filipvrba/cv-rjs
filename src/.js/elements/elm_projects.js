@@ -1,6 +1,7 @@
-import { markdown } from "markdown";
-import { EVENTS } from "../constants";
+// import ['markdown'], 'markdown'
+import { EVENTS, GITHUB_URL } from "../constants";
 import Events from "../events";
+import Net from "../core/net";
 
 export default class ElmProjects extends HTMLElement {
   constructor() {
@@ -31,15 +32,32 @@ export default class ElmProjects extends HTMLElement {
   };
 
   get_data(block) {
-    let data = [{
-      name: "Edu Game",
-      description: "![edu_game_01](https://github.com/filipvrba/edu-game-rjs/raw/main/docs/public/png/edu_game_01.png)\nA brief description of the MRuby functionality, a vital component of the Edu Game project.",
-      category: "Game",
-      url: "https://github.com/filipvrba/edu-game-rjs",
-      last_change: "1684956786"
-    }];
+    Net.http_get(GITHUB_URL.repos, (repos) => {
+      let repos_filter = () => {
+        let result = [];
 
-    if (block) block(data)
+        repos.forEach((repo) => {
+          if (Number(repo.stargazers_count) > 0 && (repo.description && repo.topics.length > 0)) {
+            result.push({
+              name: repo.name,
+              description: repo.description,
+              category: repo.topics.join(", "),
+              url: repo.html_url,
+              created_at: repo.created_at.to_date(),
+              stargazers_count: repo.stargazers_count
+            })
+          }
+        });
+
+        let result_sort = result.sort((a, b) => (
+          a.stargazers_count < b.stargazers_count
+        ));
+
+        return result_sort
+      };
+
+      if (block) block(repos_filter())
+    })
   };
 
   init_elm(data) {
@@ -70,10 +88,10 @@ export default class ElmProjects extends HTMLElement {
               <div class='row g-0'>
                 <div class='container'>
                   <div class='card-body'>
-                    <div class='md-html card-text'>${markdown.toHTML(project.description)}</div>
+                    <div class='md-html card-text'>${project.description}</div>
                     <div class='row g-0'>
                       <div class='col-6' style='margin-top: auto; margin-bottom: auto;'>
-                        <p class='card-text'><small class='text-muted'>${project.category} | ${Number(project.last_change).to_date()}</small></p>
+                        <p class='card-text'><small class='text-muted'>${project.category} | ${project.created_at}</small></p>
                       </div>
                       <div class='col-6 text-center'>
                         <a href='${project.url}' target='_blank' class='btn btn-primary card-text'>See details</a>

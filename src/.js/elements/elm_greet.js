@@ -1,5 +1,5 @@
 import { EVENTS, GITHUB_URL } from "../constants";
-import Net from "../third-side/bef/net";
+import Net from "../core/net";
 import Events from "../events";
 
 export default class ElmGreet extends HTMLElement {
@@ -40,7 +40,7 @@ export default class ElmGreet extends HTMLElement {
   };
 
   get_data(block) {
-    Net.get_json(GITHUB_URL, (profile) => {
+    Net.http_get(GITHUB_URL.profile, (profile) => {
       let data = {
         avatar: profile.avatar_url,
         full_name: profile.name,
@@ -56,7 +56,7 @@ export default class ElmGreet extends HTMLElement {
       <div class='row justify-content-center pb-3 mb-4 pt-3 mt-4'>
         <div class='col-lg-6'>
           <p class='h1 m-0'>Resources for a CV With More Clarity</p>
-          <a href='${data.profile_url}' style='color: inherit;'>
+          <a href='${data.profile_url}' target='_blank' style='color: inherit;'>
             <ul class='nav list-unstyled d-flex align-items-center'>
               <li class='ms-3'>
                 <img src='${data.avatar}' class='rounded d-block mb-3 mt-3' width='50' height='50' />

@@ -4,4 +4,7 @@ export const EVENTS = {
   elm_greet_loaded: "egreetl"
 };
 
-export const GITHUB_URL = "https://api.github.com/users/filipvrba"
+export const GITHUB_URL = {
+  profile: "https://api.github.com/users/filipvrba",
+  repos: "https://api.github.com/users/filipvrba/repos?per_page=100"
+}

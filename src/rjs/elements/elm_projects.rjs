@@ -1,6 +1,6 @@
-import ['markdown'], 'markdown'
-import ['EVENTS'], '../constants'
+import ['EVENTS', 'GITHUB_URL'], '../constants'
 import 'Events', '../events'
+import 'Net', '../core/net'
 
 export default class ElmProjects < HTMLElement
   def initialize
@@ -24,16 +24,33 @@ export default class ElmProjects < HTMLElement
   end
 
   def get_data(&block)
-    data = [
-      {
-        name: "Edu Game",
-        description: "![edu_game_01](https://github.com/filipvrba/edu-game-rjs/raw/main/docs/public/png/edu_game_01.png)\nA brief description of the MRuby functionality, a vital component of the Edu Game project.",
-        category: "Game",
-        url: "https://github.com/filipvrba/edu-game-rjs",
-        last_change: "1684956786"
-      }
-    ]
-    block(data) if block
+    Net.http_get(GITHUB_URL[:repos]) do |repos|
+      repos_filter = lambda do
+        result = []
+        repos.forEach do |repo|
+          if Number(repo.stargazers_count) > 0 && (repo.description &&
+              repo.topics.length > 0)
+
+            result << {
+              name: repo.name,
+              description: repo.description,
+              category: repo.topics.join(', '),
+              url: repo.html_url,
+              created_at: repo.created_at.to_date(),
+              stargazers_count: repo.stargazers_count,
+            }
+          end
+        end
+
+        result_sort = result.sort(lambda do |a, b|
+          a.stargazers_count < b.stargazers_count
+        end)
+
+        result_sort
+      end
+
+      block(repos_filter()) if block
+    end
   end
 
   def init_elm(data)
@@ -63,10 +80,10 @@ export default class ElmProjects < HTMLElement
               <div class='row g-0'>
                 <div class='container'>
                   <div class='card-body'>
-                    <div class='md-html card-text'>#{markdown.toHTML(project[:description])}</div>
+                    <div class='md-html card-text'>#{ project[:description] }</div>
                     <div class='row g-0'>
                       <div class='col-6' style='margin-top: auto; margin-bottom: auto;'>
-                        <p class='card-text'><small class='text-muted'>#{project[:category]} | #{ Number(project[:last_change]).to_date() }</small></p>
+                        <p class='card-text'><small class='text-muted'>#{project[:category]} | #{ project[:created_at] }</small></p>
                       </div>
                       <div class='col-6 text-center'>
                         <a href='#{project[:url]}' target='_blank' class='btn btn-primary card-text'>See details</a>

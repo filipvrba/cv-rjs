@@ -1,8 +1,8 @@
 import 'Route', './core/route'
 
 ROUTES = {
+  '404': PAGES[:err_404],
   '/': PAGES[:home],
-  '404': PAGES[:err_404]
 }
 
 Route.new ROUTES
