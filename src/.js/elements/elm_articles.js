@@ -1,5 +1,6 @@
-import { EVENTS } from "../constants";
+import { EVENTS, GITHUB_URL } from "../constants";
 import Events from "../events";
+import Net from "../core/net";
 
 export default class ElmArticles extends HTMLElement {
   constructor() {
@@ -16,17 +17,35 @@ export default class ElmArticles extends HTMLElement {
   };
 
   get_data(block) {
-    let data = [{
-      id: "1",
-      name: "Edu Game | Project development",
-      description: "What goes into creating a smaller project that is a game for education, for individuals, looking to master the Ruby programming language. The development process is described in this article.",
-      url: "https://github.com/filipvrba/edu-game-rjs/blob/main/docs/en-edu_develop.md",
-      project: "Edu Game",
-      project_url: "https://github.com/filipvrba/edu-game-rjs",
-      created_at: "1684956786"
-    }];
+    Net.http_get(GITHUB_URL.gists, (gists) => {
+      let gists_filter = () => {
+        let result = [];
 
-    if (block) block(data)
+        gists.forEach((gist) => {
+          let description_split = gist.description.split(". ");
+          let name = description_split[0];
+
+          let description = description_split.slice(
+            1,
+            description_split.length
+          ).join(". ");
+
+          if (name && description) {
+            result.push({
+              id: gist.id,
+              name,
+              description,
+              url: gist.html_url,
+              created_at: gist.created_at
+            })
+          }
+        });
+
+        return result
+      };
+
+      if (block) block(gists_filter())
+    })
   };
 
   connectedCallback() {
@@ -76,7 +95,7 @@ export default class ElmArticles extends HTMLElement {
                         <p class='card-text'>${article.description}</p>
                         <div class='row g-0'>
                           <div class='col-6' style='margin-top: auto; margin-bottom: auto;'>
-                            <p class='card-text'><small class='text-muted'><a href='${article.project_url}'>${article.project}</a> | ${Number(article.created_at).to_date()}</small></p>
+                            <p class='card-text'><small class='text-muted'>Created by ${article.created_at.to_date()}</small></p>
                           </div>
 
                           <div class='col-6 text-center'>

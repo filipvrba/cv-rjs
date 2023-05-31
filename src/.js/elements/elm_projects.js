@@ -1,4 +1,3 @@
-// import ['markdown'], 'markdown'
 import { EVENTS, GITHUB_URL } from "../constants";
 import Events from "../events";
 import Net from "../core/net";

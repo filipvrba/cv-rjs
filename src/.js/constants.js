@@ -6,5 +6,6 @@ export const EVENTS = {
 
 export const GITHUB_URL = {
   profile: "https://api.github.com/users/filipvrba",
-  repos: "https://api.github.com/users/filipvrba/repos?per_page=100"
+  repos: "https://api.github.com/users/filipvrba/repos?per_page=100",
+  gists: "https://api.github.com/users/filipvrba/gists"
 }

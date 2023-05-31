@@ -1,8 +1,0 @@
-import 'Route', './core/route'
-
-ROUTES = {
-  '404': PAGES[:err_404],
-  '/': PAGES[:home],
-}
-
-Route.new ROUTES
