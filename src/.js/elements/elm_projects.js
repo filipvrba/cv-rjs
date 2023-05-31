@@ -87,14 +87,16 @@ export default class ElmProjects extends HTMLElement {
               <div class='row g-0'>
                 <div class='container'>
                   <div class='card-body'>
-                    <div class='md-html card-text'>${project.description}</div>
+                    <p class='card-text'>${project.description}</p>
                     <div class='row g-0'>
                       <div class='col-6' style='margin-top: auto; margin-bottom: auto;'>
                         <p class='card-text'><small class='text-muted'>${project.category} | ${project.created_at}</small></p>
                       </div>
+
                       <div class='col-6 text-center'>
                         <a href='${project.url}' target='_blank' class='btn btn-primary card-text'>See details</a>
                       </div>
+
                     </div>
                   </div>
                 </div>
